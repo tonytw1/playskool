@@ -1,6 +1,6 @@
 package controllers
 
-import play.api._
+import model.Widget
 import play.api.mvc._
 
 object Application extends Controller {
@@ -10,7 +10,8 @@ object Application extends Controller {
   }
 
   def meh = Action {
-    Ok(views.html.meh("world"))
+    val widget = new Widget(2, "Red")
+    Ok(views.html.meh("world", widget))
   }
 
 }
