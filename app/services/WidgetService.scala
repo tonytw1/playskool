@@ -9,3 +9,5 @@ class WidgetService {
   }
 
 }
+
+object WidgetService extends WidgetService

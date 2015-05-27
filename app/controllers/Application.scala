@@ -6,7 +6,7 @@ import services.WidgetService
 
 object Application extends Controller {
 
-  val widgetService: WidgetService = new WidgetService
+  val widgetService: WidgetService = WidgetService
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
