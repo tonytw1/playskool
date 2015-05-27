@@ -2,8 +2,11 @@ package controllers
 
 import model.Widget
 import play.api.mvc._
+import services.WidgetService
 
 object Application extends Controller {
+
+  val widgetService: WidgetService = new WidgetService
 
   def index = Action {
     Ok(views.html.index("Your new application is ready."))
@@ -14,7 +17,7 @@ object Application extends Controller {
   }
 
   def meh = Action {
-    val widget = new Widget(2, "Red")
+    val widget = widgetService.buildWidget
     Ok(views.html.meh("world", widget))
   }
 
