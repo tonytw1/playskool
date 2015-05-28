@@ -1,10 +1,12 @@
 package controllers
 
+import play.api.libs.ws.{WSResponse, WSRequestHolder, WS}
 import play.api.mvc._
 import services.WidgetService
+import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.Play.current
 
 import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 object Application extends Controller {
 
@@ -30,7 +32,13 @@ object Application extends Controller {
   }
 
   private def fetchData(): Future[String] = {
-    Future[String]("Blah")
+    val holder: WSRequestHolder = WS.url("http://api.prod5.live.tfl.gov.uk/Place/BikePoints_195")
+    val eventualResponse: Future[WSResponse] = holder.get
+
+    val result: Future[String] = eventualResponse.map {
+      response => response.body
+    }
+    result
   }
 
 }
