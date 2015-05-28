@@ -1,4 +1,4 @@
-import model.BikePoint
+import model.{BikePointAdditionalProperty, BikePoint}
 import org.specs2.mutable.Specification
 import play.api.libs.json._
 import play.api.test._
@@ -11,7 +11,7 @@ class JsonSpec  extends Specification {
       implicit val reads: Reads[BikePoint] = Json.reads[BikePoint]
       implicit val writes: Writes[BikePoint] = Json.writes[BikePoint]
 
-      private val bikePoint: BikePoint = new BikePoint("Somewhere")
+      private val bikePoint: BikePoint = new BikePoint("Somewhere", Seq.empty[BikePointAdditionalProperty])
 
       private val json: String = Json.toJson(bikePoint).toString()
 
