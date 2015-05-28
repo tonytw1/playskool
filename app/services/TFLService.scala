@@ -16,11 +16,11 @@ class TFLService {
 
     val result: Future[BikePoint] = eventualResponse.map {
       response => {
-        val json: JsValue = response.json
-
-        val commonName: String = json.\("commonName").toString()
-        new BikePoint(commonName)
+        val json: String = response.body
+        val bikePoint: BikePoint = Json.parse(json).as[BikePoint]
+        bikePoint
       }
+
     }
     result
   }
