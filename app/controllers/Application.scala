@@ -1,6 +1,6 @@
 package controllers
 
-import play.api.libs.json.JsValue
+import model.BikePoint
 import play.api.mvc._
 import services.{TFLService, WidgetService}
 
@@ -26,10 +26,9 @@ object Application extends Controller {
   }
 
   def ws = Action.async {
-    val future: Future[JsValue] = tflService.fetchData()
+    val future: Future[BikePoint] = tflService.fetchData()
     val result: Future[Result] = future.map { data =>
-      val commonName: String = data.\("commonName").as[String]
-      Ok(views.html.ws(commonName))}
+      Ok(views.html.ws(data))}
     result
   }
 
