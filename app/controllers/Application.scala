@@ -26,7 +26,8 @@ object Application extends Controller {
   }
 
   def ws = Action.async {
-    val future: Future[BikePoint] = tflService.fetchData()
+    val id: Int = 195
+    val future: Future[BikePoint] = tflService.fetchData(id)
     val result: Future[Result] = future.map { data =>
       Ok(views.html.ws(data))}
     result
