@@ -17,8 +17,10 @@ class TFLService {
     val result: Future[BikePoint] = eventualResponse.map {
       response => {
         val json: String = response.body
-        val bikePoint: BikePoint = Json.parse(json).as[BikePoint]
-        bikePoint
+
+        implicit val reads: Reads[BikePoint] = Json.reads[BikePoint]
+
+        Json.parse(json).as[BikePoint]
       }
 
     }
