@@ -1,6 +1,5 @@
 package controllers
 
-import model.Widget
 import play.api.mvc._
 import services.WidgetService
 
@@ -19,6 +18,14 @@ object Application extends Controller {
   def meh = Action {
     val widget = widgetService.buildWidget
     Ok(views.html.meh("world", widget))
+  }
+
+  def ws = Action {
+    Ok(views.html.ws(fetchData()))
+  }
+
+  private def fetchData(): String = {
+    "Blah"
   }
 
 }
