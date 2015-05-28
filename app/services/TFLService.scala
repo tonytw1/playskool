@@ -1,6 +1,6 @@
 package services
 
-import model.BikePoint
+import model.{BikePointAdditionalProperty, BikePoint}
 import play.api.Play.current
 import play.api.libs.json._
 import play.api.libs.ws.{WS, WSRequestHolder, WSResponse}
@@ -16,11 +16,10 @@ class TFLService {
 
     val result: Future[BikePoint] = eventualResponse.map {
       response => {
-        val json: String = response.body
+        implicit val readsBikePointAdditionalProperty: Reads[BikePointAdditionalProperty] = Json.reads[BikePointAdditionalProperty]
+        implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
 
-        implicit val reads: Reads[BikePoint] = Json.reads[BikePoint]
-
-        Json.parse(json).as[BikePoint]
+        Json.parse(response.body).as[BikePoint]
       }
 
     }
