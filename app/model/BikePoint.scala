@@ -1,5 +1,6 @@
 package model
 
-class BikePoint(
+case class BikePoint(
   var commonName: String) {
 }
+
