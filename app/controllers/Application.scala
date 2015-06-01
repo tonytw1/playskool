@@ -25,8 +25,7 @@ object Application extends Controller {
     Ok(views.html.meh("world", widget))
   }
 
-  def ws = Action.async {
-    val id: Int = 195
+  def ws(id: Int) = Action.async {
     val future: Future[BikePoint] = tflService.fetchData(id)
     val result: Future[Result] = future.map { data =>
       Ok(views.html.ws(data))}
