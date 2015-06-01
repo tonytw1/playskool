@@ -14,7 +14,7 @@ class TFLService {
   implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
 
   def fetchData(id: Int): Future[BikePoint] = {
-    WS.url("http://api.prod5.live.tfl.gov.uk/Place/BikePoints_" + id).get.map {
+    WS.url("https://api.tfl.gov.uk/Place/BikePoints_" + id).get.map {
       response => {
         Json.parse(response.body).as[BikePoint]
       }
