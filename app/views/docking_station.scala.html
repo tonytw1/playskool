@@ -1,11 +1,8 @@
 @import model.BikePoint
 @(bikePoint: BikePoint)
 
-<h2>WS</h2>
-<hr/>
 <h4>@bikePoint.commonName</h4>
-
+<hr/>
 <p>Bikes available: @bikePoint.bikesAvailable.iterator.next().value</p>
 <p>Spaces available: @bikePoint.spacesAvailable.iterator.next().value</p>
-
 <hr/>
