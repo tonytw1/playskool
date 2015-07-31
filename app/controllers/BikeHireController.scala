@@ -1,11 +1,9 @@
 package controllers
 
-import model.BikePoint
 import play.api.mvc._
-import services.{TFLService, WidgetService}
+import services.TFLService
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object BikeHireController extends Controller {
 

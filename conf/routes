@@ -4,8 +4,6 @@
 
 # Home page
 GET        /                    controllers.Application.index
-GET        /foo                 controllers.Application.foo
-GET        /meh                 controllers.Application.meh
 GET        /docking-station/:id         controllers.BikeHireController.dockingStation(id: Int)
 
 # Map static resources from the /public folder to the /assets URL path

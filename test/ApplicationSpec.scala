@@ -25,15 +25,6 @@ class ApplicationSpec extends Specification {
       contentAsString(home) must contain ("Your new application is ready.")
     }
 
-    "show widgets details on the meh pages" in new WithApplication {
-      val request = FakeRequest(GET, "/meh")
-      val routedRequest: Option[Future[mvc.Result]] = route(request)
-      val eventualResult: Future[mvc.Result] = routedRequest.get
-
-      status(eventualResult) must equalTo(OK)
-      contentAsString(eventualResult) must contain ("colour: Red");
-    }
-
   }
 
 }
