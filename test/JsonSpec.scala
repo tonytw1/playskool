@@ -11,6 +11,9 @@ class JsonSpec  extends Specification {
       implicit val reads: Reads[BikePoint] = Json.reads[BikePoint]
       implicit val writes: Writes[BikePoint] = Json.writes[BikePoint]
 
+      implicit val bikePointAdditionalPropertyReads = Json.reads[BikePointAdditionalProperty]
+      implicit val bikePointAdditionalPropertyWrites = Json.writes[BikePointAdditionalProperty]
+
       private val bikePoint: BikePoint = new BikePoint("Somewhere", Seq.empty[BikePointAdditionalProperty])
 
       private val json: String = Json.toJson(bikePoint).toString()
