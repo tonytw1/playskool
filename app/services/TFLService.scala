@@ -14,8 +14,6 @@ class TFLService {
   implicit val readsBikePointAdditionalProperty: Reads[BikePointAdditionalProperty] = Json.reads[BikePointAdditionalProperty]
   implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
 
-  object TFLService extends TFLService
-
   def fetchData(id: Int): Future[BikePoint] = {
     val cacheKey: String = "docking-station-" + id
 
@@ -39,3 +37,5 @@ class TFLService {
   }
 
 }
+
+object TFLService extends TFLService
