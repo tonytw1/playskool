@@ -15,25 +15,29 @@ class TFLService {
   implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
 
   def fetchData(id: Int): Future[BikePoint] = {
-    val cacheKey: String = "docking-station-" + id
+    val cached: Future[Option[BikePoint]] = Future.successful(Cache.getAs[BikePoint](cacheKeyFor(id)))
 
-    val cached: Option[BikePoint] = Cache.getAs[BikePoint](cacheKey)
-    if (!cached.isEmpty) {
-      Future.successful(cached.get)
-
-    } else {
-      fetchFromLive(id).map {ds => {
-          Cache.set(cacheKey, ds)
-          ds
-        }
+    cached.flatMap {x =>
+      if (x.isEmpty) {
+        fetchFromLiveAndCache(id)
+      } else {
+        Future.successful(x.get)
       }
     }
   }
 
-  private def fetchFromLive(id: Int): Future[BikePoint] = {
+  private def fetchFromLiveAndCache(id: Int): Future[BikePoint] = {
     WS.url("https://api.tfl.gov.uk/Place/BikePoints_" + id).get.map {
-      response => Json.parse(response.body).as[BikePoint]
+      response => {
+        val bike: BikePoint = Json.parse(response.body).as[BikePoint]
+        Cache.set(cacheKeyFor(id), bike)
+        bike
+      }
     }
+  }
+
+  private def cacheKeyFor(id: Int): String = {
+    "docking-station-" + id
   }
 
 }
