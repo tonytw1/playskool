@@ -12,22 +12,20 @@ import play.api.Logger
 
 class TFLService {
 
-  implicit val readsBikePointAdditionalProperty: Reads[BikePointAdditionalProperty] = Json.reads[BikePointAdditionalProperty]
-  implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
-
   def fetchData(id: String): Future[BikePoint] = {
 
     Logger.info("Get bike point by id: " + id)
+    val bikePointId = "BikePoints_" + id
 
-    val cached: Future[Option[BikePoint]] = Future.successful(Cache.getAs[BikePoint](cacheKeyFor(id)))
+    val cached: Future[Option[BikePoint]] = Future.successful(Cache.getAs[BikePoint](cacheKeyFor(bikePointId)))
 
     cached.flatMap {x =>
-      if (x.isEmpty) {
-        Logger.info("Cache miss for: " + id)
-        cache(fetchFromLive(id))
-      } else {
-        Logger.info("Cache hit for: " + id)
+      if (!x.isEmpty) {
+        Logger.info("Cache hit for: " + bikePointId)
         Future.successful(x.get)
+      } else {
+        Logger.info("Cache miss for: " + bikePointId)
+        cache(fetchFromLive(id))
       }
     }
   }
@@ -38,6 +36,10 @@ class TFLService {
     WS.url(url).get.map {
       response => {
         Logger.debug("HTTP response body: " + response.body)
+
+        implicit val readsBikePointAdditionalProperty: Reads[BikePointAdditionalProperty] = Json.reads[BikePointAdditionalProperty]
+        implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
+
         Json.parse(response.body).as[BikePoint]
       }
     }
@@ -50,8 +52,8 @@ class TFLService {
     response
   }
 
-  private def cacheKeyFor(id: String): String = {
-    "docking-station-" + id
+  private def cacheKeyFor(bikePointId: String): String = {
+    "docking-station-" + bikePointId
   }
 
 }
