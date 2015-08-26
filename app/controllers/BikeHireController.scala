@@ -10,7 +10,7 @@ object BikeHireController extends Controller {
   val tflService: TFLService = TFLService
 
   def dockingStation(id: Int) = Action.async {
-    tflService.fetchData(id).map { data =>
+    tflService.fetchData("BikePoints_" + id).map { data =>
       Ok(views.html.docking_station(data))
     }
   }

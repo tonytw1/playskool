@@ -1,6 +1,6 @@
 package model
 
-case class BikePoint(var commonName: String, var additionalProperties: Seq[BikePointAdditionalProperty]) {
+case class BikePoint(var id: String, var commonName: String, var additionalProperties: Seq[BikePointAdditionalProperty]) {
 
   def bikesAvailable = {
     additionalProperties find (ap => {ap.key == "NbBikes"})
