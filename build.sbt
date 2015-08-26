@@ -1,4 +1,4 @@
-name := "untitled1"
+name := "playskool"
 
 version := "1.0"
 
