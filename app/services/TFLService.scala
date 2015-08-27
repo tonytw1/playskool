@@ -17,7 +17,7 @@ class TFLService {
     Logger.info("Get bike point by id: " + id)
     val bikePointId = "BikePoints_" + id
 
-    val cached: Future[Option[BikePoint]] = Future.successful(Cache.getAs[BikePoint](cacheKeyFor(bikePointId)))
+    val cached: Future[Option[BikePoint]] = fetchFromCache(bikePointId)
 
     cached.flatMap {x =>
       if (!x.isEmpty) {
@@ -28,6 +28,10 @@ class TFLService {
         cache(fetchFromLive(id))
       }
     }
+  }
+
+  def fetchFromCache(bikePointId: Nothing): Future[Option[BikePoint]] = {
+    Future.successful(Cache.getAs[BikePoint](cacheKeyFor(bikePointId)))
   }
 
   private def fetchFromLive(id: String): Future[BikePoint] = {
