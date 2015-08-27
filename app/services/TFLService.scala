@@ -1,37 +1,41 @@
 package services
 
 import model.{BikePoint, BikePointAdditionalProperty}
+import play.api.Logger
 import play.api.Play.current
 import play.api.libs.json._
 import play.api.libs.ws.WS
-import play.api.cache.Cache
+import shade.memcached._
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
-import play.api.Logger
+import scala.concurrent.duration._
 
-class TFLService {
+class TFLService extends MemcachedCodecs {
+
+  private val memcached = Memcached(Configuration("ubuntu.local:11211"), ec)
 
   def fetchData(id: String): Future[BikePoint] = {
 
     Logger.info("Get bike point by id: " + id)
-    val bikePointId = "BikePoints_" + id
 
-    val cached: Future[Option[BikePoint]] = fetchFromCache(bikePointId)
+    val cached: Future[Option[BikePoint]] = fetchFromCache(id)
 
     cached.flatMap {x =>
       if (!x.isEmpty) {
-        Logger.info("Cache hit for: " + bikePointId)
+        Logger.info("Cache hit for: " + id)
         Future.successful(x.get)
       } else {
-        Logger.info("Cache miss for: " + bikePointId)
+        Logger.info("Cache miss for: " + id)
         cache(fetchFromLive(id))
       }
     }
   }
 
-  def fetchFromCache(bikePointId: Nothing): Future[Option[BikePoint]] = {
-    Future.successful(Cache.getAs[BikePoint](cacheKeyFor(bikePointId)))
+  def fetchFromCache(bikePointId: String): Future[Option[BikePoint]] = {
+    val keyFor: String = cacheKeyFor(bikePointId)
+    Logger.info("Fetching from cache: " + bikePointId)
+    memcached.get[BikePoint](keyFor)
   }
 
   private def fetchFromLive(id: String): Future[BikePoint] = {
@@ -50,8 +54,11 @@ class TFLService {
   }
 
   private def cache(response: Future[BikePoint]) = {
-    response.map(x =>
-      Cache.set(cacheKeyFor(x.id), x)
+    response.map(x => {
+      val keyFor: String = cacheKeyFor(x.id)
+      Logger.info("Caching " + x.id + " to: " + keyFor)
+      memcached.set(keyFor, x, 1.minute)
+    }
     )
     response
   }
