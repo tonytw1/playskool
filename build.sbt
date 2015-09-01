@@ -16,5 +16,7 @@ libraryDependencies ++= Seq( jdbc , anorm , cache , ws, "com.bionicspirit" %% "s
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
 
 maintainer in Linux := "Tony McCrae <tony@eelpieconsulting.co.uk>"
+
 packageSummary in Linux := "Test Play project"
+
 packageDescription := "Check Play concepts here"
