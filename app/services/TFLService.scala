@@ -13,7 +13,7 @@ import scala.concurrent.duration._
 
 class TFLService extends MemcachedCodecs {
 
-  private val memcached = Memcached(Configuration("ubuntu.local:11211"), ec)
+  private val memcached = Memcached(Configuration("localhost:11211"), ec)
 
   def fetchData(id: String): Future[BikePoint] = {
 
