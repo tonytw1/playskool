@@ -1,5 +1,7 @@
 @import model.BikePoint
-@(bikePoint: BikePoint)
+@(bikePoint: BikePoint)(implicit header: views.Header)
+
+<h1>@header.date</h1>
 
 <h4>@bikePoint.commonName</h4>
 <hr/>
