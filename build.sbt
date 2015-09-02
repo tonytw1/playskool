@@ -13,6 +13,8 @@ resolvers += "Spy" at "http://files.couchbase.com/maven2/"
 
 libraryDependencies ++= Seq( jdbc , anorm , cache , ws, "com.bionicspirit" %% "shade" % "1.6.0" )
 
+libraryDependencies += "com.sksamuel.elastic4s" %% "elastic4s-core" % "1.7.0"
+
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
 
 maintainer in Linux := "Tony McCrae <tony@eelpieconsulting.co.uk>"
