@@ -8,13 +8,14 @@ import play.api.Logger
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
 
-class ElasticSearchService {
+trait ElasticSearchService {
+
+  def client: ElasticClient
 
   def fetchData(): Unit = {
     Logger.info("Querying Elasticsearch")
-    val client = ElasticClient.remote("localhost", 9300)
 
-    val resp: Future[SearchResponse] = client.execute {search in "osm20150815" / "places" query "meh"}
+    val resp: Future[SearchResponse] = client.execute {search in "osm20150815" / "places" query "meh" limit 10}
     resp.map(s => {
       Logger.info("Hits" + s.getHits.totalHits())
     })
@@ -22,5 +23,8 @@ class ElasticSearchService {
 
 }
 
-object ElasticSearchService extends ElasticSearchService
+object ElasticSearchService extends ElasticSearchService {
 
+  override val client = ElasticClient.remote("localhost", 9300)
+
+}
