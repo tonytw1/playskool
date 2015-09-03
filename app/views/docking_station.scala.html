@@ -1,5 +1,9 @@
 @import model.BikePoint
+@import views.TemplateHelper
+
 @(bikePoint: BikePoint)(implicit header: views.Header)
+
+@TemplateHelper.meh("test1")
 
 <h1>@header.date</h1>
 
