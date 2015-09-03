@@ -13,9 +13,10 @@ object BikeHireController extends Controller with WithHeader {
 
   def dockingStation(id: Int) = Action.async {
 
-    elasticSearchService.fetchData()
+    elasticSearchService.fetchData("British Museum, Bloomsbury")
 
     tflService.fetchData("BikePoints_" + id).map { data =>
+      elasticSearchService.upsert(data)
       Ok(views.html.docking_station(data))
     }
   }
