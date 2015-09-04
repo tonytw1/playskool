@@ -59,7 +59,7 @@ trait ElasticSearchService {
   }
 
   def deleteIndex() = {
-    Logger.info("Deleting index (blocking)")
+    Logger.info("Deleting index (blocking)")  // TODO any way to check if this is required first?
     try {
       client.execute {
         delete index INDEX
@@ -77,7 +77,7 @@ trait ElasticSearchService {
 
 object ElasticSearchService extends ElasticSearchService {
 
-  override val client = ElasticClient.remote("ubuntu.local", 9300)
+  override val client = ElasticClient.remote("localhost", 9300)
 
   {
     deleteIndex()
