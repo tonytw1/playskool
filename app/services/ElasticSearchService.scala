@@ -30,7 +30,6 @@ trait ElasticSearchService {
     })
   }
 
-
   def upsert(dockingStation: BikePoint): Unit = {
     Logger.info("Indexing: " + dockingStation)
     val eventualResponse: Future[UpdateResponse] = client execute {
@@ -59,10 +58,19 @@ trait ElasticSearchService {
     Logger.info("Index created")
   }
 
-  def deleteIndex(): Unit = { // TODO needs to fail gracefully if index doesn't exist
+  def deleteIndex() = {
     Logger.info("Deleting index (blocking)")
-    client.execute {delete index INDEX}.await
-    Logger.info("Index deleted")
+    try {
+      client.execute {
+        delete index INDEX
+      }.await
+      Logger.info("Index deleted")
+
+    } catch {
+      case e: Exception => {
+        Logger.error("Index delete failed", e)
+      }
+    }
   }
 
 }
