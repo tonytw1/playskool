@@ -20,13 +20,15 @@ trait ElasticSearchService {
 
   def client: ElasticClient
 
-  def fetchData(q: String): Unit = {
+  def fetchData(q: String): Future[Long] = {
     Logger.info("Querying Elasticsearch for: " + q)
 
     val resp: Future[SearchResponse] = client.execute {
       search in INDEX / DOCKING_STATION query { term("name", q)} limit 10}
     resp.map(s => {
-      Logger.info("Hits" + s.getHits.totalHits())
+      val hits: Long = s.getHits.totalHits()
+      Logger.info("Found hits: " + hits)
+      hits
     })
   }
 

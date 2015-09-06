@@ -1,7 +1,7 @@
 @import model.BikePoint
 @import views.TemplateHelper
 
-@(bikePoint: BikePoint)(implicit header: views.Header)
+@(bikePoint: BikePoint, es: Long)(implicit header: views.Header)
 
 @TemplateHelper.meh("test1")
 
@@ -12,3 +12,7 @@
 <p>Bikes available: @bikePoint.bikesAvailable.iterator.next().value</p>
 <p>Spaces available: @bikePoint.spacesAvailable.iterator.next().value</p>
 <hr/>
+
+$es
+
+</hr>
