@@ -1,10 +1,12 @@
 package controllers
 
+import model.BikePoint
 import play.api.mvc._
 import services.{ElasticSearchService, TFLService}
 import views.{WithHeader, Header}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object BikeHireController extends Controller with WithHeader {
 
@@ -13,11 +15,14 @@ object BikeHireController extends Controller with WithHeader {
 
   def dockingStation(id: Int) = Action.async {
 
+    val dockingStationCall: Future[BikePoint] = tflService.fetchData("BikePoints_" + id)
+    val elasticSearchCall: Future[Long] = elasticSearchService.fetchData("British Museum, Bloomsbury")
+
     for {
-      dockingStation <- tflService.fetchData("BikePoints_" + id)
-      es <- elasticSearchService.fetchData("British Museum, Bloomsbury")
+      ds <- dockingStationCall
+      es <- elasticSearchCall
     } yield {
-      Ok(views.html.docking_station(dockingStation, es))
+      Ok(views.html.docking_station(ds, es))
     }
 
   }
