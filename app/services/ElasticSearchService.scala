@@ -1,14 +1,12 @@
 package services
 
-import com.sksamuel.elastic4s.{KeywordAnalyzer, ElasticClient, SimpleAnalyzer}
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.mappings.FieldType.GeoPointType
+import com.sksamuel.elastic4s.mappings.FieldType._
+import com.sksamuel.elastic4s.{RichSearchHit, HitAs, ElasticClient, KeywordAnalyzer}
 import model.BikePoint
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.update.UpdateResponse
 import play.api.Logger
-import com.sksamuel.elastic4s.mappings.FieldType._
-import com.sksamuel.elastic4s.ElasticDsl._
 
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
@@ -20,15 +18,23 @@ trait ElasticSearchService {
 
   def client: ElasticClient
 
-  def fetchData(q: String): Future[Long] = {
+  implicit object BikePointHitAs extends HitAs[BikePoint] {
+    override def as(hit: RichSearchHit): BikePoint = {
+      BikePoint(hit.id, hit.sourceAsMap("name").toString, Seq())
+    }
+  }
+
+  def fetchData(q: String): Future[Array[BikePoint]] = {
     Logger.info("Querying Elasticsearch for: " + q)
 
     val resp: Future[SearchResponse] = client.execute {
-      search in INDEX / DOCKING_STATION query { term("name", q)} limit 10}
+      search in INDEX / DOCKING_STATION  }
     resp.map(s => {
       val hits: Long = s.getHits.totalHits()
       Logger.info("Found hits: " + hits)
-      hits
+      val points: Array[BikePoint] = s.as[BikePoint]
+      Logger.info("Mapped hits to: " + points)
+      points
     })
   }
 

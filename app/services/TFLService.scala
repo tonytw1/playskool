@@ -19,8 +19,6 @@ class TFLService extends MemcachedCodecs {
 
     Logger.info("Get bike point by id: " + id)
 
-    Logger.info("Config: " + Play.application().configuration().getString("memcached.host"))
-
     val cached: Future[Option[BikePoint]] = fetchFromCache(id)
 
     cached.flatMap {x =>
