@@ -6,6 +6,7 @@ import play.api.Play.current
 import play.api.libs.json._
 import play.api.libs.ws.WS
 import shade.memcached._
+import play.api.Play
 
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
@@ -71,7 +72,7 @@ trait TFLService extends MemcachedCodecs {
 
 object TFLService extends TFLService {
 
-  override val memcached = Memcached(Configuration("localhost:11211"), ec)
+  override val memcached = Memcached(Configuration(Play.configuration.getString("memcached.host").get + ":11211"), ec)
 
 }
 
