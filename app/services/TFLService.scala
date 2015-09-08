@@ -11,9 +11,9 @@ import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class TFLService extends MemcachedCodecs {
+trait TFLService extends MemcachedCodecs {
 
-  private val memcached = Memcached(Configuration("localhost:11211"), ec)
+  val memcached: Memcached
 
   def fetchData(id: String): Future[BikePoint] = {
 
@@ -69,4 +69,9 @@ class TFLService extends MemcachedCodecs {
 
 }
 
-object TFLService extends TFLService
+object TFLService extends TFLService {
+
+  override val memcached = Memcached(Configuration("localhost:11211"), ec)
+
+}
+
