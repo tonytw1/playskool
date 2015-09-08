@@ -1,6 +1,7 @@
 package services
 
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.admin.IndexExistsDefinition
 import com.sksamuel.elastic4s.mappings.FieldType._
 import com.sksamuel.elastic4s.{RichSearchHit, HitAs, ElasticClient, KeywordAnalyzer}
 import model.BikePoint
@@ -24,7 +25,7 @@ trait ElasticSearchService {
     }
   }
 
-  def fetchData(q: String): Future[Array[BikePoint]] = {
+  def all(q: String): Future[Array[BikePoint]] = {
     Logger.info("Querying Elasticsearch for: " + q)
 
     val resp: Future[SearchResponse] = client.execute {
@@ -55,15 +56,20 @@ trait ElasticSearchService {
   }
 
   def createIndex(): Unit = {
-    Logger.info("Creating index (blocking)")
-    client.execute {create index INDEX mappings (
-      DOCKING_STATION as (
-        "id" typed StringType,
-        "name" typed StringType analyzer KeywordAnalyzer
-        )
-      )}.await
+    Logger.info("Checking for existing index")
+    client.execute {index exists INDEX}.map(e => {
 
-    Logger.info("Index created")
+      if (!e.isExists) {
+        Logger.info("Creating index (blocking)")
+        client.execute {create index INDEX mappings (
+          DOCKING_STATION as (
+            "id" typed StringType,
+            "name" typed StringType analyzer KeywordAnalyzer
+            )
+          )}.await
+        Logger.info("Index created")
+      }
+    })
   }
 
   def deleteIndex() = {

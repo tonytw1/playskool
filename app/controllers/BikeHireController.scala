@@ -16,7 +16,7 @@ object BikeHireController extends Controller with WithHeader {
   def dockingStation(id: Int) = Action.async {
 
     val dockingStationCall: Future[BikePoint] = tflService.fetchData("BikePoints_" + id)
-    val elasticSearchCall: Future[Array[BikePoint]] = elasticSearchService.fetchData("British Museum, Bloomsbury")
+    val elasticSearchCall: Future[Array[BikePoint]] = elasticSearchService.all("British Museum, Bloomsbury")
 
     for {
       ds <- dockingStationCall
@@ -26,7 +26,6 @@ object BikeHireController extends Controller with WithHeader {
       elasticSearchService.upsert(ds)
       Ok(views.html.docking_station(ds, es))
     }
-
 
   }
 
