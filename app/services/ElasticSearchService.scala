@@ -1,13 +1,13 @@
 package services
 
 import com.sksamuel.elastic4s.ElasticDsl._
-import com.sksamuel.elastic4s.admin.IndexExistsDefinition
 import com.sksamuel.elastic4s.mappings.FieldType._
-import com.sksamuel.elastic4s.{RichSearchHit, HitAs, ElasticClient, KeywordAnalyzer}
+import com.sksamuel.elastic4s.{ElasticClient, HitAs, KeywordAnalyzer, RichSearchHit}
 import model.BikePoint
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.update.UpdateResponse
-import play.api.Logger
+import play.api.{Logger, Play}
+import play.api.Play.current
 
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
@@ -17,7 +17,7 @@ trait ElasticSearchService {
   val INDEX: String = "tfl"
   val DOCKING_STATION: String = "dockingstation"
 
-  def client: ElasticClient
+  val client: ElasticClient
 
   implicit object BikePointHitAs extends HitAs[BikePoint] {
     override def as(hit: RichSearchHit): BikePoint = {
@@ -91,7 +91,7 @@ trait ElasticSearchService {
 
 object ElasticSearchService extends ElasticSearchService {
 
-  override val client = ElasticClient.remote("localhost", 9300)
+  override val client = ElasticClient.remote(Play.configuration.getString("elasticsearch.host").get, 9300)
 
   {
     deleteIndex()

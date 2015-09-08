@@ -1,12 +1,11 @@
 package services
 
 import model.{BikePoint, BikePointAdditionalProperty}
-import play.api.Logger
+import play.api.{Logger, Play}
 import play.api.Play.current
 import play.api.libs.json._
 import play.api.libs.ws.WS
 import shade.memcached._
-import play.api.Play
 
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
