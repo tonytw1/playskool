@@ -11,8 +11,9 @@
 <hr/>
 <p>Bikes available: @bikePoint.bikesAvailable.iterator.next().value</p>
 <p>Spaces available: @bikePoint.spacesAvailable.iterator.next().value</p>
+
 <hr/>
-
-@es
-
-</hr>
+@es.map{e =>
+    @e.commonName<br/>
+}
+<hr/>
