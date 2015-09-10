@@ -26,7 +26,7 @@ class JsonSpec extends Specification {
     "Be able to parse a list of objects without hair pulling" in new WithApplication {
       implicit val formats: Format[FeedItem] = Json.format[FeedItem]
 
-      val item: FeedItem = FeedItem("Headline", "http://localhost/meh", None)
+      val item: FeedItem = FeedItem("Headline", "http://localhost/meh", None, None)
 
       val feedItems: Seq[FeedItem] = Seq(item)
 

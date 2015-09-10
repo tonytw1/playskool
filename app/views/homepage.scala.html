@@ -6,8 +6,11 @@
 <hr/>
 @feedItems.map{i =>
     <a href="@i.url">@i.title</a><br/>
-    @i.imageUrl.map(im => im)
+    @i.imageUrl.map{im =>
+        <img src="@im" />
+    }
+    @i.body.map {b =>
+        <p>@b</p>
+    }
 }
-
-
 <hr/>
