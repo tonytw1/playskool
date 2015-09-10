@@ -5,7 +5,8 @@
 
 <hr/>
 @feedItems.map{i =>
-<a href="@i.url">@i.title</a><br/>
+    <a href="@i.url">@i.title</a><br/>
+    @i.imageUrl.map(im => im)
 }
 
 
