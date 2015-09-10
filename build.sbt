@@ -22,3 +22,6 @@ maintainer in Linux := "Tony McCrae <tony@eelpieconsulting.co.uk>"
 packageSummary in Linux := "Test Play project"
 
 packageDescription := "Check Play concepts here"
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.2"
+
