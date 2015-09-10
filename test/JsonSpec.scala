@@ -1,5 +1,6 @@
-import model.{BikePointAdditionalProperty, BikePoint}
+import model.{FeedItem, BikePointAdditionalProperty, BikePoint}
 import org.specs2.mutable.Specification
+import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
 import play.api.test._
 
@@ -22,6 +23,19 @@ class JsonSpec extends Specification {
       roundTripped.commonName must equalTo("Somewhere")
     }
 
+    "Be able to parse a list of objects without hair pulling" in new WithApplication {
+      implicit val formats: Format[FeedItem] = Json.format[FeedItem]
+
+      val item: FeedItem = FeedItem("Headline", "http://localhost/meh")
+
+      val feedItems: Seq[FeedItem] = Seq(item)
+
+      private val json: String = Json.toJson(feedItems).toString()
+      println(json)
+
+      private val roundTripped = Json.parse(json).as[Seq[FeedItem]]
+      println(roundTripped)
+    }
   }
 
 }

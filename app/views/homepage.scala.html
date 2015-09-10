@@ -1,0 +1,12 @@
+@import model.FeedItem
+@(feedItems: Seq[FeedItem])
+
+<h1>News</h1>
+
+<hr/>
+@feedItems.map{i =>
+<a href="@i.url">@i.title</a><br/>
+}
+
+
+<hr/>
