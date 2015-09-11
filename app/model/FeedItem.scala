@@ -9,7 +9,6 @@ trait Newsworthy {
   def body: Option[String]
 }
 
-
 trait Tagged {
   def tags: Seq[Tag]
 }
