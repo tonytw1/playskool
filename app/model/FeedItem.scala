@@ -2,7 +2,14 @@ package model
 
 import play.api.libs.json.{Json, Format}
 
-case class FeedItem(val title: String, val url: String, imageUrl: Option[String], body: Option[String], tags: Option[Set[Tag]]) // TODO don't want the Option on tags
+trait Newsworthy {
+  def title: String
+  def url: String
+  def imageUrl: Option[String]
+  def body: Option[String]
+}
+
+case class FeedItem(title: String, url: String, imageUrl: Option[String], body: Option[String]) extends Newsworthy
 
 object FeedItem {
   implicit val formats: Format[FeedItem] = Json.format[FeedItem]
