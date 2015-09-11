@@ -1,6 +1,6 @@
 package services
 
-import model.{Tag, FeedItem}
+import model.{Newsitem, Tag, FeedItem}
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.json._
@@ -13,11 +13,16 @@ trait WhakaokoService {
 
   val url: String = "https://whakaoko.eelpieconsulting.co.uk/tonytw1/channels/wellynews/items"
 
-  def fetchFeed(): Future[Seq[FeedItem]] = {
+  val tag: Tag = Tag("Some tag")
+
+  def fetchFeed(): Future[Seq[Newsitem]] = {
     Logger.info("Fetching from url: " + url)
     WS.url(url).get.map {
       response => {
-        Json.parse(response.body).as[Seq[FeedItem]]
+        val feedItems: Seq[FeedItem] = Json.parse(response.body).as[Seq[FeedItem]]
+        feedItems.map(f => {
+          new Newsitem(f.title, f.url, f.imageUrl, f.body, Seq(tag))
+        })
       }
     }
   }
