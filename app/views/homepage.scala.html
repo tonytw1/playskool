@@ -4,18 +4,5 @@
 <h1>News</h1>
 
 <hr/>
-@newsitems.map{i =>
-    <a href="@i.url">@i.title</a><br/>
-    @i.imageUrl.map{im =>
-        <img src="@im" />
-    }
-    @i.body.map {b =>
-        <p>@b</p>
-    }
-    @i.tags.map {t =>
-        <p><a href="@routes.Application.tag(t.id)">@t.name</a></p>
-    }
-}
+@includes.newsitems(newsitems)
 <hr/>
-
-@widget()
