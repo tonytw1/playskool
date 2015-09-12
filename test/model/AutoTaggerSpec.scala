@@ -13,7 +13,7 @@ class AutoTaggerSpec extends Specification {
       val tags = autoTagger.inferTagsFor(FeedItem("Something mentioning Rugby", "http://localhost/123", None, None))
 
       tags must have length(1)
-      tags must contain(Tag("Rugby"))
+      tags must contain(Tag("rugby", "Rugby"))
     }
 
     "be case insenitice when matching tag names in titles" in {
@@ -21,7 +21,7 @@ class AutoTaggerSpec extends Specification {
       val tags = autoTagger.inferTagsFor(FeedItem("Something mentioning rugby", "http://localhost/123", None, None))
 
       tags must have length(1)
-      tags must contain(Tag("Rugby"))
+      tags must contain(Tag("rugby", "Rugby"))
     }
 
   }

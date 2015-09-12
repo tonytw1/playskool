@@ -1,9 +1,7 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
-
-# Home page
 GET        /                    controllers.Application.index
+GET        /tags                controllers.Application.allTags
+GET        /tags/:id            controllers.Application.tag(id: String)
+
 GET        /docking-station/:id         controllers.BikeHireController.dockingStation(id: Int)
 
 # Map static resources from the /public folder to the /assets URL path

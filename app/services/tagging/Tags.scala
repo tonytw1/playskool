@@ -6,10 +6,10 @@ import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 
 trait AutoTagger {
 
-  val tags: Tags = Tags
+  val availableTags = Seq(Tag("Rugby"), Tag("Victoria University"), Tag("Upper Hutt"))
 
   def inferTagsFor(item: Newsworthy): Seq[Tag] = {
-    tags.all.filter(t => {
+    availableTags.filter(t => {
       item.title.toLowerCase.contains(t.name.toLowerCase)
     })
   }

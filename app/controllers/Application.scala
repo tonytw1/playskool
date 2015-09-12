@@ -3,12 +3,15 @@ package controllers
 import model.Tag
 import play.api.mvc._
 import services.newsitems.NewsitemService
+import services.tagging.Tags
+import scala.concurrent.Future
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object Application extends Controller {
 
   val newsItemService: NewsitemService = NewsitemService
+  val tags: Tags = Tags
 
   def index = Action.async {
     newsItemService.latest.map(ns =>
@@ -16,8 +19,12 @@ object Application extends Controller {
     ))
   }
 
-  def tagged = Action.async {
-    newsItemService.tagged(Tag("Rugby")).map(ns =>
+  def allTags = Action.async {
+    Future.successful(Ok(views.html.tags(Tags.all())))
+  }
+
+  def tag(id: String) = Action.async {
+    newsItemService.tagged(tags.byId(id)).map(ns =>
       Ok(views.html.homepage(ns)))
   }
 
