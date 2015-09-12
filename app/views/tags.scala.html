@@ -4,5 +4,7 @@
 <h1>Tags</h1>
 
 <hr/>
-@tags
+@tags.map{t=>
+    <p><a href="@routes.Application.tag(t.id)"/>@t.name</a></p>
+}
 <hr/>
