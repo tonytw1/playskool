@@ -8,10 +8,10 @@ trait Tags {
 
   val availableTags = Seq(Tag("rugby", "Rugby"), Tag("vuw", "Victoria University"), Tag("upper-hutt", "Upper Hutt"))
 
-  def byId(id: String): Tag = {
+  def byId(id: String): Option[Tag] = {
     availableTags.find(t => {
       t.id.equals(id)
-    }).getOrElse(throw new RuntimeException("Not found")) // TODO How to 404 correctly in Play
+    })
   }
 
   def all(): Seq[Tag] = {

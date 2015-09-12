@@ -24,7 +24,11 @@ object Application extends Controller {
   }
 
   def tag(id: String) = Action.async {
-    val tag: Tag = tags.byId(id)
+    val tag: Option[Tag] = tags.byId(id)
+    tag.fold(Future.successful(NotFound("Not found")))(t => tagPage(t))
+  }
+
+  private def tagPage(tag: Tag): Future[Result] = {
     newsItemService.tagged(tag).map(ns =>
       Ok(views.html.tag(ns, tag)))
   }
