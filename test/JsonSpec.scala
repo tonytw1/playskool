@@ -1,4 +1,5 @@
 import model.{FeedItem, BikePointAdditionalProperty, BikePoint}
+import org.joda.time.DateTime
 import org.specs2.mutable.Specification
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
@@ -26,7 +27,7 @@ class JsonSpec extends Specification {
     "Be able to parse a list of objects without hair pulling" in new WithApplication {
       implicit val formats: Format[FeedItem] = Json.format[FeedItem]
 
-      val item: FeedItem = FeedItem("Headline", "http://localhost/meh", None, None)
+      val item: FeedItem = FeedItem("Headline", "http://localhost/meh", None, None, Some(DateTime.now().toDate))
 
       val feedItems: Seq[FeedItem] = Seq(item)
 

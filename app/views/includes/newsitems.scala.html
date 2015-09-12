@@ -3,6 +3,9 @@
 
 @newsitems.map{i =>
     <a href="@i.url">@i.title</a><br/>
+    @i.date.map{d =>
+        @d
+    }
     @i.imageUrl.map{im =>
         <img src="@im" />
     }

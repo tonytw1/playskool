@@ -16,7 +16,7 @@ trait NewsitemService {
   def latest(): Future[Seq[Newsitem]] = {
     whakaokoService.fetchFeed().map(feedItems => {
       feedItems.map(i => {
-        Newsitem(i.title, i.url, i.imageUrl, i.body, autoTagger.inferTagsFor(i))
+        Newsitem(i.title, i.url, i.imageUrl, i.body, i.date, autoTagger.inferTagsFor(i))
       })
     })
   }
