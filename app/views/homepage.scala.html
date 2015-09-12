@@ -12,6 +12,8 @@
     @i.body.map {b =>
         <p>@b</p>
     }
-    @i.tags
+    @i.tags.map {t =>
+        <p>@t.name</p>
+    }
 }
 <hr/>

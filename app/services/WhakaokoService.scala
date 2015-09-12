@@ -13,7 +13,7 @@ trait WhakaokoService {
 
   val url: String = "https://whakaoko.eelpieconsulting.co.uk/tonytw1/channels/wellynews/items"
 
-  val tag: Tag = Tag("Some tag")
+  val availableTags = Seq(Tag("Rugby"), Tag("Victoria University"), Tag("Upper Hutt"))
 
   def fetchFeed(): Future[Seq[Newsitem]] = {
     Logger.info("Fetching from url: " + url)
@@ -21,10 +21,17 @@ trait WhakaokoService {
       response => {
         val feedItems: Seq[FeedItem] = Json.parse(response.body).as[Seq[FeedItem]]
         feedItems.map(f => {
-          new Newsitem(f.title, f.url, f.imageUrl, f.body, Seq(tag))
+          val tags: Seq[Tag] = inferTagsFor(f)
+          new Newsitem(f.title, f.url, f.imageUrl, f.body, tags)
         })
       }
     }
+  }
+
+  def inferTagsFor(item: FeedItem): Seq[Tag] = {
+    availableTags.filter(t => {
+      item.title.toLowerCase.contains(t.name.toLowerCase)
+    })
   }
 
 }
