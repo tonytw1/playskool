@@ -1,5 +1,6 @@
 package controllers
 
+import model.Tag
 import play.api.mvc._
 import services.newsitems.NewsitemService
 
@@ -13,6 +14,11 @@ object Application extends Controller {
     newsItemService.latest.map(ns =>
       Ok(views.html.homepage(ns)
     ))
+  }
+
+  def tagged = Action.async {
+    newsItemService.tagged(Tag("Rugby")).map(ns =>
+      Ok(views.html.homepage(ns)))
   }
 
 }

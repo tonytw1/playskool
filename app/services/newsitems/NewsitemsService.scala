@@ -1,6 +1,7 @@
 package services.newsitems
 
 import model.Newsitem
+import model.Tag
 import services.WhakaokoService
 import services.tagging.AutoTagger
 
@@ -17,6 +18,12 @@ trait NewsitemService {
       feedItems.map(i => {
         Newsitem(i.title, i.url, i.imageUrl, i.body, autoTagger.inferTagsFor(i))
       })
+    })
+  }
+
+  def tagged(tag: Tag): Future[Seq[Newsitem]] = {
+    latest().map(ns => {
+      ns.filter(i => i.tags.contains(tag))
     })
   }
 
