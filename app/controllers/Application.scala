@@ -24,8 +24,9 @@ object Application extends Controller {
   }
 
   def tag(id: String) = Action.async {
-    newsItemService.tagged(tags.byId(id)).map(ns =>
-      Ok(views.html.homepage(ns)))
+    val tag: Tag = tags.byId(id)
+    newsItemService.tagged(tag).map(ns =>
+      Ok(views.html.tag(ns, tag)))
   }
 
 }

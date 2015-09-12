@@ -1,13 +1,14 @@
 @import model.Newsitem
-@(newsitems: Seq[Newsitem])
+@import model.Tag
+@(newsitems: Seq[Newsitem], tag: Tag)
 
-<h1>News</h1>
+<h1>@tag.name</h1>
 
 <hr/>
 @newsitems.map{i =>
     <a href="@i.url">@i.title</a><br/>
     @i.imageUrl.map{im =>
-        <img src="@im" />
+       <img src="@im" />
     }
     @i.body.map {b =>
         <p>@b</p>
