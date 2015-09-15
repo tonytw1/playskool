@@ -9,9 +9,10 @@ trait AutoTagger {
   val tags: Tags = Tags
 
   def inferTagsFor(item: Newsworthy): Seq[Tag] = {
-    tags.all.filter(t => {
+    val headlineBasedMatches: Seq[Tag] = tags.all.filter(t => {
       item.title.toLowerCase.contains(t.name.toLowerCase)
     })
+    headlineBasedMatches
   }
 
 }

@@ -13,15 +13,22 @@ class AutoTaggerSpec extends Specification {
       val tags = autoTagger.inferTagsFor(FeedItem("Something mentioning Rugby", "http://localhost/123", None, None, None))
 
       tags must have length(1)
-      tags must contain(Tag("rugby", "Rugby"))
+      tags.head.name must be ("Rugby")
     }
 
-    "be case insenitice when matching tag names in titles" in {
+    "be case insensitive when matching tag names in titles" in {
 
       val tags = autoTagger.inferTagsFor(FeedItem("Something mentioning rugby", "http://localhost/123", None, None, None))
 
       tags must have length(1)
-      tags must contain(Tag("rugby", "Rugby"))
+      tags.head.name must be ("Rugby")
+    }
+
+    "respond to autotagging hints" in {
+      val tags = autoTagger.inferTagsFor(FeedItem("Something mentioning football", "http://localhost/123", None, None, None))
+
+      tags must have length(1)
+      tags.head.name must be ("Soccer")
     }
 
   }

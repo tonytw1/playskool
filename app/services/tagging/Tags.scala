@@ -6,7 +6,8 @@ import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 
 trait Tags {
 
-  val availableTags = Seq(Tag("rugby", "Rugby"), Tag("vuw", "Victoria University"), Tag("upper-hutt", "Upper Hutt"))
+  val availableTags = Seq(Tag("rugby", "Rugby", None), Tag("vuw", "Victoria University", None),
+    Tag("upper-hutt", "Upper Hutt", None), Tag("soccer", "Soccer", Some("football")))
 
   def byId(id: String): Option[Tag] = {
     availableTags.find(t => {
