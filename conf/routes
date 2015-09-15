@@ -1,6 +1,6 @@
 GET        /                    controllers.Application.index
 GET        /tags                controllers.Application.allTags
-GET        /tags/:id            controllers.Application.tag(id: String)
+GET        /tags/:id            controllers.Application.tag(id: Int)
 
 GET        /docking-station/:id         controllers.BikeHireController.dockingStation(id: Int)
 

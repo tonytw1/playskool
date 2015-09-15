@@ -13,6 +13,6 @@
         <p>@b</p>
     }
     @i.tags.map {t =>
-        <p><a href="@routes.Application.tag("1")">@t.name</a></p>
+        <p><a href="@routes.Application.tag(t.id)">@t.name</a></p>
     }
 }

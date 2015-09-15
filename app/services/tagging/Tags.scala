@@ -9,10 +9,10 @@ trait Tags {
 
   val tagService: TagService = TagService
 
-  def byId(id: String): Future[Option[Tag]] = {
+  def byId(id: Int): Future[Option[Tag]] = {
     all.map(ts =>
       ts.find(t => {
-        t.ida.equals(id)
+        t.id.equals(id)
       }
     ))
   }

@@ -5,8 +5,8 @@ import services.tagging.AutoTagger
 
 class AutoTaggerSpec extends Specification {
 
-  val availableTags = Seq(Tag("rugby", "Rugby", None), Tag("vuw", "Victoria University", None),
-    Tag("upper-hutt", "Upper Hutt", None), Tag("soccer", "Soccer", Some("football")))
+  val availableTags = Seq(Tag(1, "Rugby", None), Tag(2, "Victoria University", None),
+    Tag(3, "Upper Hutt", None), Tag(4, "Soccer", Some("football")))
 
   "Auto tagger" should {
 

@@ -23,7 +23,7 @@ object Application extends Controller {
     Tags.all.map(t => Ok(views.html.tags(t)))
   }
 
-  def tag(id: String) = Action.async {
+  def tag(id: Int) = Action.async {
     tags.byId(id).flatMap(tag =>
       tag.fold(Future.successful(NotFound("Not found")))(t => tagPage(t)))
   }
