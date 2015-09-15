@@ -12,7 +12,7 @@ trait Tags {
   def byId(id: String): Future[Option[Tag]] = {
     all.map(ts =>
       ts.find(t => {
-        t.id.equals(id)
+        t.ida.equals(id)
       }
     ))
   }
