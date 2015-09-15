@@ -1,6 +1,6 @@
 package controllers
 
-import model.Tag
+import model.{Newsitem, Tag}
 import play.api.mvc._
 import services.newsitems.NewsitemService
 import services.tagging.Tags
@@ -24,17 +24,14 @@ object Application extends Controller {
   }
 
   def tag(id: String) = Action.async {
-    val ft: Future[Option[Tag]] = tags.byId(id)
-
-    ft.map(to => to.fold(NotFound("Not found"))(t => tagPage(t)))
-
-
-
+    tags.byId(id).flatMap(tag =>
+      tag.fold(Future.successful(NotFound("Not found")))(t => tagPage(t)))
   }
 
-  private def tagPage(tag: Tag): Future[Result] = {
-    newsItemService.tagged(tag).map(ns =>
-      Ok(views.html.tag(ns, tag)))
+  private def tagPage(tag: Tag) = {
+    newsItemService.tagged(tag).map(ns => {
+      Ok(views.html.tag(ns, tag))
+    })
   }
 
 }
