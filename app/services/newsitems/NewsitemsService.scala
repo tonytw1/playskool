@@ -3,7 +3,7 @@ package services.newsitems
 import model.Newsitem
 import model.Tag
 import services.WhakaokoService
-import services.tagging.AutoTagger
+import services.tagging.{Tags, AutoTagger}
 
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
@@ -12,11 +12,12 @@ trait NewsitemService {
 
   val whakaokoService: WhakaokoService = WhakaokoService
   val autoTagger: AutoTagger = AutoTagger
+  val tags: Tags = Tags
 
   def latest(): Future[Seq[Newsitem]] = {
     whakaokoService.fetchFeed().map(feedItems => {
       feedItems.map(i => {
-        Newsitem(i.title, i.url, i.imageUrl, i.body, i.date, autoTagger.inferTagsFor(i))
+        Newsitem(i.title, i.url, i.imageUrl, i.body, i.date, autoTagger.inferTagsFor(i, tags.all))
       })
     })
   }
