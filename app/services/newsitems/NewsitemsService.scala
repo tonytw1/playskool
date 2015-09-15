@@ -1,7 +1,6 @@
 package services.newsitems
 
-import model.Newsitem
-import model.Tag
+import model.{FeedItem, Newsitem, Tag}
 import services.WhakaokoService
 import services.tagging.{Tags, AutoTagger}
 
@@ -15,11 +14,19 @@ trait NewsitemService {
   val tags: Tags = Tags
 
   def latest(): Future[Seq[Newsitem]] = {
-    whakaokoService.fetchFeed().map(feedItems => {
-      feedItems.map(i => {
-        Newsitem(i.title, i.url, i.imageUrl, i.body, i.date, autoTagger.inferTagsFor(i, tags.all))
-      })
-    })
+
+    val feedItemsFuture: Future[Seq[FeedItem]] = whakaokoService.fetchFeed()
+    val tagsFuture: Future[Seq[Tag]] = tags.all()
+
+    for {
+      ts <- tagsFuture.map(t => t)
+      fis <- feedItemsFuture.map(f => f)
+
+    } yield (
+      fis.map(i => {
+        Newsitem(i.title, i.url, i.imageUrl, i.body, i.date, autoTagger.inferTagsFor(i, ts))
+      }))
+
   }
 
   def tagged(tag: Tag): Future[Seq[Newsitem]] = {

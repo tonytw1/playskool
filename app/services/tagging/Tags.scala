@@ -3,20 +3,22 @@ package services.tagging
 import model.{Newsworthy, Tag}
 
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
+import scala.concurrent.Future
 
 trait Tags {
 
-  val availableTags = Seq(Tag("rugby", "Rugby", None), Tag("vuw", "Victoria University", None),
-    Tag("upper-hutt", "Upper Hutt", None), Tag("soccer", "Soccer", Some("football")))
+  val tagService: TagService = TagService
 
-  def byId(id: String): Option[Tag] = {
-    availableTags.find(t => {
-      t.id.equals(id)
-    })
+  def byId(id: String): Future[Option[Tag]] = {
+    all.map(ts =>
+      ts.find(t => {
+        t.id.equals(id)
+      }
+    ))
   }
 
-  def all(): Seq[Tag] = {
-    availableTags
+  def all(): Future[Seq[Tag]] = {
+   tagService.fetchTags()
   }
 
 }

@@ -20,12 +20,16 @@ object Application extends Controller {
   }
 
   def allTags = Action.async {
-    Future.successful(Ok(views.html.tags(Tags.all())))
+    Tags.all.map(t => Ok(views.html.tags(t)))
   }
 
   def tag(id: String) = Action.async {
-    val tag: Option[Tag] = tags.byId(id)
-    tag.fold(Future.successful(NotFound("Not found")))(t => tagPage(t))
+    val ft: Future[Option[Tag]] = tags.byId(id)
+
+    ft.map(to => to.fold(NotFound("Not found"))(t => tagPage(t)))
+
+
+
   }
 
   private def tagPage(tag: Tag): Future[Result] = {
