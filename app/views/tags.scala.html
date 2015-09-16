@@ -6,6 +6,6 @@
 <hr/>
 @tags.map{t=>
     <p><a href="@routes.Application.tag(t.id)"/>@t.name</a></p>
-    <p>@t.description.fold()(d => <p>d</p>)
+    <p>@t.description</p>
 }
 <hr/>
