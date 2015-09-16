@@ -15,6 +15,8 @@ libraryDependencies ++= Seq( jdbc , anorm , cache , ws, "com.bionicspirit" %% "s
 
 libraryDependencies += "com.sksamuel.elastic4s" %% "elastic4s-core" % "1.7.0"
 
+libraryDependencies ++= Seq("org.reactivemongo" %% "reactivemongo" % "0.11.7")
+
 unmanagedResourceDirectories in Test <+=  baseDirectory ( _ /"target/web/public/test" )  
 
 maintainer in Linux := "Tony McCrae <tony@eelpieconsulting.co.uk>"
