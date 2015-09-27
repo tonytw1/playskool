@@ -1,17 +1,16 @@
-import com.typesafe.sbt.SbtNativePackager._
-import NativePackagerKeys._
-
 name := "playskool"
 
 version := "1.0"
 
 lazy val `untitled1` = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.7"
 
 resolvers += "Spy" at "http://files.couchbase.com/maven2/"
 
-libraryDependencies ++= Seq( jdbc , anorm , cache , ws, "com.bionicspirit" %% "shade" % "1.6.0" )
+libraryDependencies ++= Seq( jdbc , cache , ws, "com.bionicspirit" %% "shade" % "1.6.0" )
+
+libraryDependencies += "com.typesafe.play" %% "anorm" % "2.4.0"
 
 libraryDependencies += "com.sksamuel.elastic4s" %% "elastic4s-core" % "1.7.0"
 
