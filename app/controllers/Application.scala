@@ -16,15 +16,16 @@ object Application extends Controller {
   val mongoService: MongoService = MongoService
 
   def index = Action.async {
-    newsItemService.latest.map(ns =>
-      ns.map(n => mongoService.write(n))
-    )
-
-    // Future write not actually complete yet
-
     mongoService.listDocs().map(ns =>
       Ok(views.html.homepage(ns))
     )
+  }
+
+  def fetch = Action.async {
+    newsItemService.latest.map(ns => {
+      ns.map(n => mongoService.write(n))
+      Ok(views.html.homepage(ns))
+    })
   }
 
   def allTags = Action.async {
