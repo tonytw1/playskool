@@ -2,17 +2,16 @@ package services.mongo
 
 import java.util.Date
 
-import model.{Tag, Newsitem}
-import play.api.{Play, Logger}
+import model.{Newsitem, Tag}
+import play.api.Play.current
+import play.api.{Logger, Play}
 import reactivemongo.api._
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONDocumentWriter, BSONDocumentReader, BSONDocument}
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-import scala.util.Failure
-import scala.util.Success
+import reactivemongo.bson.{BSONDocument, BSONDocumentReader, BSONDocumentWriter}
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.Play.current
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 trait MongoService {
 
@@ -60,6 +59,16 @@ trait MongoService {
 
   def listDocs(): Future[List[Newsitem]] = {
 
+    implicit object TagReader extends BSONDocumentReader[Tag] {
+      override def read(bson: BSONDocument): Tag = {
+        Tag(bson.getAs[Int]("id").get,
+          bson.getAs[String]("name").get,
+          None,
+          None
+          )
+      }
+    }
+
     implicit object NewsitemReader extends BSONDocumentReader[Newsitem] {
       override def read(bson: BSONDocument): Newsitem = {
         Newsitem(bson.getAs[String]("title").get,
@@ -67,7 +76,7 @@ trait MongoService {
           bson.getAs[String]("imageUrl"),
           bson.getAs[String]("body"),
           bson.getAs[Date]("date"),
-          Seq())
+          bson.getAs[Seq[Tag]]("tags").get)
       }
     }
 
