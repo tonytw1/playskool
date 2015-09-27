@@ -2,11 +2,11 @@ package services.mongo
 
 import java.util.Date
 
-import model.Newsitem
+import model.{Tag, Newsitem}
 import play.api.{Play, Logger}
 import reactivemongo.api._
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.{BSONDocumentReader, BSONDocument}
+import reactivemongo.bson.{BSONDocumentWriter, BSONDocumentReader, BSONDocument}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.util.Failure
@@ -29,12 +29,22 @@ trait MongoService {
 
   def write(newsitem: Newsitem) = {
 
+    implicit object TagWriter extends BSONDocumentWriter[Tag] {
+      override def write(t: Tag): BSONDocument = {
+        BSONDocument(
+          "id" -> t.id,
+          "name" -> t.name
+        )
+      }
+    }
+
     val document = BSONDocument(
       "title" -> newsitem.title,
       "url" -> newsitem.url,
       "date" -> newsitem.date,
       "imageUrl" -> newsitem.imageUrl,
-      "body" -> newsitem.body
+      "body" -> newsitem.body,
+      "tags" -> newsitem.tags
     )
 
     val selector = BSONDocument("url" -> newsitem.url)
