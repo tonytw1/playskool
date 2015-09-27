@@ -2,6 +2,7 @@ package controllers
 
 import model.{Newsitem, Tag}
 import play.api.mvc._
+import services.mongo.MongoService
 import services.newsitems.NewsitemService
 import services.tagging.Tags
 import scala.concurrent.Future
@@ -12,8 +13,12 @@ object Application extends Controller {
 
   val newsItemService: NewsitemService = NewsitemService
   val tags: Tags = Tags
+  val mongoService: MongoService = MongoService
 
   def index = Action.async {
+
+    mongoService.write
+
     newsItemService.latest.map(ns =>
       Ok(views.html.homepage(ns)
     ))
