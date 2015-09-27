@@ -1,13 +1,13 @@
 package controllers
 
-import model.{Newsitem, Tag}
+import model.Tag
 import play.api.mvc._
 import services.mongo.MongoService
 import services.newsitems.NewsitemService
 import services.tagging.Tags
-import scala.concurrent.Future
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object Application extends Controller {
 
@@ -17,11 +17,13 @@ object Application extends Controller {
 
   def index = Action.async {
 
-    mongoService.write
-
-    newsItemService.latest.map(ns =>
-      Ok(views.html.homepage(ns)
-    ))
+    newsItemService.latest.map(ns => {
+      ns.map(n =>
+        mongoService.write(n)
+      )
+      Ok(views.html.homepage(ns))
+    }
+    )
   }
 
   def allTags = Action.async {

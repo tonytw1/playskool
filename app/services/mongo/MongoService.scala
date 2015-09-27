@@ -1,5 +1,6 @@
 package services.mongo
 
+import model.Newsitem
 import play.api.{Play, Logger}
 import reactivemongo.api._
 import reactivemongo.api.collections.bson.BSONCollection
@@ -24,11 +25,12 @@ trait MongoService {
     db("test")
   }
 
-  def write() = {
-    Logger.info("Writing")
+  def write(newsitem: Newsitem) = {
+    Logger.info("Writing: " + newsitem)
     val document = BSONDocument(
-      "firstName" -> "Stephane",
-      "lastName" -> "Godbillon"
+      "title" -> newsitem.title,
+      "url" -> newsitem.url,
+      "body" -> newsitem.body
     )
 
     val insert = collection.insert(document)
