@@ -1,6 +1,6 @@
 package controllers
 
-import model.Tag
+import model.{Newsitem, Tag}
 import play.api.mvc._
 import services.mongo.MongoService
 import services.newsitems.NewsitemService
@@ -16,13 +16,14 @@ object Application extends Controller {
   val mongoService: MongoService = MongoService
 
   def index = Action.async {
+    newsItemService.latest.map(ns =>
+      ns.map(n => mongoService.write(n))
+    )
 
-    newsItemService.latest.map(ns => {
-      ns.map(n =>
-        mongoService.write(n)
-      )
+    // Future write not actually complete yet
+
+    mongoService.listDocs().map(ns =>
       Ok(views.html.homepage(ns))
-    }
     )
   }
 

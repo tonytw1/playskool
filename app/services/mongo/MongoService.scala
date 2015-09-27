@@ -4,7 +4,7 @@ import model.Newsitem
 import play.api.{Play, Logger}
 import reactivemongo.api._
 import reactivemongo.api.collections.bson.BSONCollection
-import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.{BSONDocumentReader, BSONDocument}
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 import scala.util.Failure
@@ -26,7 +26,7 @@ trait MongoService {
   }
 
   def write(newsitem: Newsitem) = {
-    Logger.info("Writing: " + newsitem)
+
     val document = BSONDocument(
       "title" -> newsitem.title,
       "url" -> newsitem.url,
@@ -38,36 +38,30 @@ trait MongoService {
 
     update.onComplete {
       case Failure(e) =>
-        Logger.error("FAIL")
+        Logger.error("Failed to write: " + newsitem)
       case Success(writeResult) =>
-        Logger.info("DONE")
-      case _ =>
-        Logger.info("MEH")
+        Logger.info("Wrote: " + newsitem)
     }
-
-    Logger.info("Finished writing")
   }
 
-  def listDocs(collection: BSONCollection) = {
-    val query = BSONDocument()
+  def listDocs(): Future[List[Newsitem]] = {
 
-    Logger.info("Results")
-
-    val futureList: Future[List[BSONDocument]] =
-      collection.find(query).
-        cursor[BSONDocument].
-        collect[List]()
-
-    val map = futureList.map { list =>
-      Logger.info("List: " + list.size)
-      list.foreach { doc =>
-        Logger.info(s"found document: ${BSONDocument pretty doc}")
+    implicit object NewsitemReader extends BSONDocumentReader[Newsitem] {
+      override def read(bson: BSONDocument): Newsitem = {
+        Newsitem(bson.getAs[String]("title").get,
+          bson.getAs[String]("url").get,
+          None,
+          None,
+          None,
+          Seq())
       }
     }
 
-    Await.ready(map, Duration.Inf)
+    val query = BSONDocument()
 
-    Logger.info("End")
+    collection.find(query).
+      cursor[Newsitem].
+      collect[List]()
   }
 
 }
