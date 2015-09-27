@@ -33,9 +33,10 @@ trait MongoService {
       "body" -> newsitem.body
     )
 
-    val insert = collection.insert(document)
+    val selector = BSONDocument("url" -> newsitem.url)
+    val update = collection.update(selector, document, upsert = true)
 
-    insert.onComplete {
+    update.onComplete {
       case Failure(e) =>
         Logger.error("FAIL")
       case Success(writeResult) =>
