@@ -30,6 +30,7 @@ trait MongoService {
     val document = BSONDocument(
       "title" -> newsitem.title,
       "url" -> newsitem.url,
+      "imageUrl" -> newsitem.imageUrl,
       "body" -> newsitem.body
     )
 
@@ -50,8 +51,8 @@ trait MongoService {
       override def read(bson: BSONDocument): Newsitem = {
         Newsitem(bson.getAs[String]("title").get,
           bson.getAs[String]("url").get,
-          None,
-          None,
+          bson.getAs[String]("imageUrl"),
+          bson.getAs[String]("body"),
           None,
           Seq())
       }
