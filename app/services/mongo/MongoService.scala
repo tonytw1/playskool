@@ -1,5 +1,7 @@
 package services.mongo
 
+import java.util.Date
+
 import model.Newsitem
 import play.api.{Play, Logger}
 import reactivemongo.api._
@@ -30,6 +32,7 @@ trait MongoService {
     val document = BSONDocument(
       "title" -> newsitem.title,
       "url" -> newsitem.url,
+      "date" -> newsitem.date,
       "imageUrl" -> newsitem.imageUrl,
       "body" -> newsitem.body
     )
@@ -53,7 +56,7 @@ trait MongoService {
           bson.getAs[String]("url").get,
           bson.getAs[String]("imageUrl"),
           bson.getAs[String]("body"),
-          None,
+          bson.getAs[Date]("date"),
           Seq())
       }
     }
