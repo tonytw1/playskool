@@ -17,6 +17,27 @@ trait MongoService {
 
   val collection: BSONCollection
 
+  val all = BSONDocument()
+
+  implicit object TagWriter extends BSONDocumentWriter[Tag] {
+    override def write(t: Tag): BSONDocument = {
+      BSONDocument(
+        "id" -> t.id,
+        "name" -> t.name
+      )
+    }
+  }
+
+  implicit object TagReader extends BSONDocumentReader[Tag] {
+    override def read(bson: BSONDocument): Tag = {
+      Tag(bson.getAs[Int]("id").get,
+        bson.getAs[String]("name").get,
+        None,
+        None
+      )
+    }
+  }
+
   def connect(mongoHost: String): BSONCollection = {
 
     val driver = new MongoDriver
@@ -26,16 +47,26 @@ trait MongoService {
     db("test")
   }
 
-  def write(newsitem: Newsitem) = {
+  def writeTag(tag: Tag) = {
 
-    implicit object TagWriter extends BSONDocumentWriter[Tag] {
-      override def write(t: Tag): BSONDocument = {
-        BSONDocument(
-          "id" -> t.id,
-          "name" -> t.name
-        )
-      }
+    val selector = BSONDocument("id" -> tag.id)
+    val update = collection.update(selector, tag, upsert = true)
+
+    update.onComplete {
+      case Success(writeResult) =>
+        Logger.info("Wrote: " + tag)
+      case Failure(e) =>
+        Logger.error("Failed to write: " + tag)
     }
+  }
+
+  def readTags(): Future[List[Tag]] = {
+    collection.find(all).
+      cursor[Tag].
+      collect[List]()
+  }
+
+  def write(newsitem: Newsitem) = {
 
     val document = BSONDocument(
       "title" -> newsitem.title,
@@ -50,24 +81,14 @@ trait MongoService {
     val update = collection.update(selector, document, upsert = true)
 
     update.onComplete {
-      case Failure(e) =>
-        Logger.error("Failed to write: " + newsitem)
       case Success(writeResult) =>
         Logger.info("Wrote: " + newsitem)
+      case Failure(e) =>
+        Logger.error("Failed to write: " + newsitem)
     }
   }
 
-  def listDocs(): Future[List[Newsitem]] = {
-
-    implicit object TagReader extends BSONDocumentReader[Tag] {
-      override def read(bson: BSONDocument): Tag = {
-        Tag(bson.getAs[Int]("id").get,
-          bson.getAs[String]("name").get,
-          None,
-          None
-          )
-      }
-    }
+  def read(): Future[List[Newsitem]] = {
 
     implicit object NewsitemReader extends BSONDocumentReader[Newsitem] {
       override def read(bson: BSONDocument): Newsitem = {
@@ -80,9 +101,7 @@ trait MongoService {
       }
     }
 
-    val query = BSONDocument()
-
-    collection.find(query).
+    collection.find(all).
       cursor[Newsitem].
       collect[List]()
   }

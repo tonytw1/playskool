@@ -16,7 +16,7 @@ object Application extends Controller {
   val mongoService: MongoService = MongoService
 
   def index = Action.async {
-    mongoService.listDocs().map(ns =>
+    mongoService.read().map(ns =>
       Ok(views.html.homepage(ns))
     )
   }

@@ -1,6 +1,7 @@
 package services.tagging
 
 import model.{Newsworthy, Tag}
+import services.mongo.MongoService
 
 import scala.concurrent.ExecutionContext.Implicits.{global => ec}
 import scala.concurrent.Future
@@ -8,6 +9,7 @@ import scala.concurrent.Future
 trait Tags {
 
   val tagService: TagService = TagService
+  val mongoService: MongoService = MongoService
 
   def byId(id: Int): Future[Option[Tag]] = {
     all.map(ts =>
@@ -18,7 +20,9 @@ trait Tags {
   }
 
   def all(): Future[Seq[Tag]] = {
-   tagService.fetchTags()
+    val tags: Future[Seq[Tag]] = tagService.fetchTags()
+    tags.map(ts => ts.foreach(t => mongoService.writeTag(t)))
+    tags
   }
 
 }
