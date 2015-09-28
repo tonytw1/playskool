@@ -1,5 +1,6 @@
 GET        /                    controllers.Application.index
 GET        /fetch               controllers.Application.fetch
+GET        /fetch/tags          controllers.Application.fetchTags
 GET        /tags                controllers.Application.allTags
 GET        /tags/:id            controllers.Application.tag(id: Int)
 

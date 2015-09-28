@@ -28,6 +28,10 @@ object Application extends Controller {
     })
   }
 
+  def fetchTags = Action.async {
+    Tags.fetch.map(t => Ok(sviews.html.tags(t)))
+  }
+
   def allTags = Action.async {
     Tags.all.map(t => Ok(views.html.tags(t)))
   }
