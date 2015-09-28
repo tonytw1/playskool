@@ -21,8 +21,12 @@ trait Tags {
 
   def all(): Future[Seq[Tag]] = {
     val tags: Future[Seq[Tag]] = tagService.fetchTags()
+
     tags.map(ts => ts.foreach(t => mongoService.writeTag(t)))
-    tags
+
+    // To the write future hasn't completed before the next read
+
+    mongoService.readTags()
   }
 
 }
