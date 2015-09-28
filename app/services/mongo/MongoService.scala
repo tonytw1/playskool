@@ -15,7 +15,10 @@ import scala.util.{Failure, Success}
 
 trait MongoService {
 
-  val collection: BSONCollection
+  val mongoHost: String
+  val db: DefaultDB
+  val newsitems: BSONCollection
+  val tags: BSONCollection
 
   val all = BSONDocument()
 
@@ -38,19 +41,16 @@ trait MongoService {
     }
   }
 
-  def connect(mongoHost: String): BSONCollection = {
-
+  def connect(mongoHost: String): DefaultDB = {
     val driver = new MongoDriver
     val connection = driver.connection(List(mongoHost))
-
-    val db: DefaultDB = connection("test")
-    db("test")
+    connection("test")
   }
 
   def writeTag(tag: Tag) = {
 
     val selector = BSONDocument("id" -> tag.id)
-    val update = collection.update(selector, tag, upsert = true)
+    val update = tags.update(selector, tag, upsert = true)
 
     update.onComplete {
       case Success(writeResult) =>
@@ -61,7 +61,7 @@ trait MongoService {
   }
 
   def readTags(): Future[List[Tag]] = {
-    collection.find(all).
+    tags.find(all).
       cursor[Tag].
       collect[List]()
   }
@@ -78,7 +78,7 @@ trait MongoService {
     )
 
     val selector = BSONDocument("url" -> newsitem.url)
-    val update = collection.update(selector, document, upsert = true)
+    val update = newsitems.update(selector, document, upsert = true)
 
     update.onComplete {
       case Success(writeResult) =>
@@ -101,7 +101,7 @@ trait MongoService {
       }
     }
 
-    collection.find(all).
+    newsitems.find(all).
       cursor[Newsitem].
       collect[List]()
   }
@@ -110,6 +110,9 @@ trait MongoService {
 
 object MongoService extends MongoService {
 
-  override val collection = connect(Play.configuration.getString("mongo.host").get)
+  override lazy val mongoHost: String = Play.configuration.getString("mongo.host").get
+  override lazy val db = connect(mongoHost)
+  override lazy val newsitems: BSONCollection = db.collection("newsitems")
+  override lazy val tags: BSONCollection = db.collection("tags")
 
 }
