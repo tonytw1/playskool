@@ -42,7 +42,7 @@ object Application extends Controller {
   }
 
   private def tagPage(tag: Tag) = {
-    newsItemService.tagged(tag).map(ns => {
+    mongoService.readByTag(tag).map(ns => {
       Ok(views.html.tag(ns, tag))
     })
   }

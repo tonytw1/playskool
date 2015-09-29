@@ -41,6 +41,17 @@ trait MongoService {
     }
   }
 
+  implicit object NewsitemReader extends BSONDocumentReader[Newsitem] {
+    override def read(bson: BSONDocument): Newsitem = {
+      Newsitem(bson.getAs[String]("title").get,
+        bson.getAs[String]("url").get,
+        bson.getAs[String]("imageUrl"),
+        bson.getAs[String]("body"),
+        bson.getAs[Date]("date"),
+        bson.getAs[Seq[Tag]]("tags").get)
+    }
+  }
+
   def connect(mongoHost: String): DefaultDB = {
     val driver = new MongoDriver
     val connection = driver.connection(List(mongoHost))
@@ -68,7 +79,7 @@ trait MongoService {
 
   def write(newsitem: Newsitem) = {
 
-    val document = BSONDocument(
+    val document = BSONDocument(  // TODO move to implicit writer pattern
       "title" -> newsitem.title,
       "url" -> newsitem.url,
       "date" -> newsitem.date,
@@ -89,19 +100,16 @@ trait MongoService {
   }
 
   def read(): Future[List[Newsitem]] = {
-
-    implicit object NewsitemReader extends BSONDocumentReader[Newsitem] {
-      override def read(bson: BSONDocument): Newsitem = {
-        Newsitem(bson.getAs[String]("title").get,
-          bson.getAs[String]("url").get,
-          bson.getAs[String]("imageUrl"),
-          bson.getAs[String]("body"),
-          bson.getAs[Date]("date"),
-          bson.getAs[Seq[Tag]]("tags").get)
-      }
-    }
-
     newsitems.find(all).
+      cursor[Newsitem].
+      collect[List]()
+  }
+
+  def readByTag(tag: Tag): Future[List[Newsitem]] = {
+
+    val byTag = BSONDocument("tag.id" -> tag.id)
+
+    newsitems.find(byTag).
       cursor[Newsitem].
       collect[List]()
   }
