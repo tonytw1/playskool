@@ -31,6 +31,19 @@ trait MongoService {
     }
   }
 
+  implicit object NewsitemWriter extends BSONDocumentWriter[Newsitem] {
+    override def write(n: Newsitem): BSONDocument = {
+      BSONDocument(
+        "title" -> n.title,
+        "url" -> n.url,
+        "date" -> n.date,
+        "imageUrl" -> n.imageUrl,
+        "body" -> n.body,
+        "tags" -> n.tags
+      )
+    }
+  }
+
   implicit object TagReader extends BSONDocumentReader[Tag] {
     override def read(bson: BSONDocument): Tag = {
       Tag(bson.getAs[Int]("id").get,
@@ -79,17 +92,8 @@ trait MongoService {
 
   def write(newsitem: Newsitem) = {
 
-    val document = BSONDocument(  // TODO move to implicit writer pattern
-      "title" -> newsitem.title,
-      "url" -> newsitem.url,
-      "date" -> newsitem.date,
-      "imageUrl" -> newsitem.imageUrl,
-      "body" -> newsitem.body,
-      "tags" -> newsitem.tags
-    )
-
     val selector = BSONDocument("url" -> newsitem.url)
-    val update = newsitems.update(selector, document, upsert = true)
+    val update = newsitems.update(selector, newsitem, upsert = true)
 
     update.onComplete {
       case Success(writeResult) =>
