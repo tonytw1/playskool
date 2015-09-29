@@ -113,7 +113,7 @@ trait MongoService {
 
   def readByTag(tag: Tag): Future[List[Newsitem]] = {
 
-    val byTag = BSONDocument("tag.id" -> tag.id)
+    val byTag = BSONDocument("tags.id" -> tag.id)
 
     newsitems.find(byTag).
       cursor[Newsitem].
