@@ -26,7 +26,9 @@ trait MongoService {
     override def write(t: Tag): BSONDocument = {
       BSONDocument(
         "id" -> t.id,
-        "name" -> t.name
+        "name" -> t.name,
+        "description" -> t.description,
+        "autoTagHints" -> t.autoTagHints
       )
     }
   }
