@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: playskool
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: playskool
+    spec:
+      containers:
+      - name: playskool
+        image: datchet.local:5000/playskool
+        ports:
+        - containerPort: 9000
