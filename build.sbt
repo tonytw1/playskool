@@ -29,3 +29,17 @@ packageDescription := "Check Play concepts here"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.2"
 
+
+enablePlugins(DockerPlugin)
+
+import com.typesafe.sbt.packager.docker._
+// dockerExposedPorts := Seq(9000, 9443)
+
+
+dockerBaseImage := "debian:jessie-backports"
+dockerCommands ++= Seq(
+  Cmd("USER", "root"),
+  ExecCmd("RUN", "apt-get", "update"),
+  ExecCmd("RUN", "apt-get", "upgrade", "-y"),
+  ExecCmd("RUN", "apt-get", "install", "-y", "openjdk-8-jdk-headless:amd64")
+)
