@@ -13,9 +13,9 @@ import scala.concurrent.duration._
 
 class TFLService @Inject()(ws: WSClient, config: play.api.Configuration) extends MemcachedCodecs {
 
-  private val memcachedLocation = config.getString("memcached.location").get
-  val memcached = Memcached(Configuration(memcachedLocation))
-
+  private val memcachedHost = config.getString("memcached.host").get
+  private val memcachedPort = config.getInt("memcached.port").get
+  val memcached = Memcached(Configuration(memcachedHost + ":" + memcachedPort))
 
   def fetchBikePoint(id: Int): Future[BikePoint] = {
     Logger.info("Get bike point by id: " + id)
