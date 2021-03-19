@@ -1,10 +1,4 @@
-GET        /                    controllers.Application.index
-GET        /fetch               controllers.Application.fetch
-GET        /fetch/tags          controllers.Application.fetchTags
-GET        /tags                controllers.Application.allTags
-GET        /tags/:id            controllers.Application.tag(id: Int)
-
-GET        /docking-station/:id         controllers.BikeHireController.dockingStation(id: Int)
+GET        /    controllers.BikeHireController.dockingStation()
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)

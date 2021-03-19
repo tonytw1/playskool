@@ -1,32 +1,22 @@
 package controllers
 
-import model.BikePoint
 import play.api.mvc._
-import services.{ElasticSearchService, TFLService}
-import views.{WithHeader, Header}
+import services.TFLService
+import views.WithHeader
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 object BikeHireController extends Controller with WithHeader {
 
   val tflService: TFLService = TFLService
-  val elasticSearchService = ElasticSearchService
+  val id = 797 // TODO push to config
 
-  def dockingStation(id: Int) = Action.async {
-
-    val dockingStationCall: Future[BikePoint] = tflService.fetchData("BikePoints_" + id)
-    val elasticSearchCall: Future[Array[BikePoint]] = elasticSearchService.all("British Museum, Bloomsbury")
-
+  def dockingStation() = Action.async {
     for {
-      ds <- dockingStationCall
-      es <- elasticSearchCall
-
+      ds <- tflService.fetchBikePoint(id)
     } yield {
-      elasticSearchService.upsert(ds)
-      Ok(views.html.docking_station(ds, es))
+      Ok(views.html.docking_station(ds))
     }
-
   }
 
 }

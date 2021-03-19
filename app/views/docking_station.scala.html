@@ -1,19 +1,12 @@
 @import model.BikePoint
-@import views.TemplateHelper
 
-@(bikePoint: BikePoint, es: Array[BikePoint])(implicit header: views.Header)
-
-@TemplateHelper.meh("test1")
+@(bikePoint: BikePoint)(implicit header: views.Header)
 
 <h1>@header.date</h1>
+<hr/>
 
 <h4>@bikePoint.commonName</h4>
-<hr/>
 <p>Bikes available: @bikePoint.bikesAvailable.iterator.next().value</p>
 <p>Spaces available: @bikePoint.spacesAvailable.iterator.next().value</p>
 
-<hr/>
-@es.map{e =>
-    <a href="@routes.BikeHireController.dockingStation(123)">@e.commonName</a><br/>
-}
 <hr/>
