@@ -1,31 +1,30 @@
 package services
 
 import model.{BikePoint, BikePointAdditionalProperty}
-import play.api.{Logger, Play}
-import play.api.Play.current
 import play.api.libs.json._
-import play.api.libs.ws.WS
-import shade.memcached._
+import play.api.libs.ws.WSClient
+import play.api.Logger
+import shade.memcached.{Configuration, Memcached, MemcachedCodecs}
 
-import scala.concurrent.ExecutionContext.Implicits.{global => ec}
+import javax.inject.Inject
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-trait TFLService extends MemcachedCodecs {
+class TFLService @Inject()(ws: WSClient, config: play.api.Configuration) extends MemcachedCodecs {
 
-  val memcached: Memcached
+  private val memcachedLocation = config.getString("memcached.location").get
+  val memcached = Memcached(Configuration(memcachedLocation))
+
 
   def fetchBikePoint(id: Int): Future[BikePoint] = {
-
     Logger.info("Get bike point by id: " + id)
     val bikePointId = "BikePoints_" + id
 
-    val cached: Future[Option[BikePoint]] = fetchFromCache(bikePointId)
-
-    cached.flatMap {x =>
-      if (!x.isEmpty) {
+    fetchFromCache(bikePointId).flatMap { cacheHit =>
+      if (cacheHit.isDefined) {
         Logger.info("Cache hit for: " + id)
-        Future.successful(x.get)
+        Future.successful(cacheHit.get)
       } else {
         Logger.info("Cache miss for: " + id)
         cache(fetchFromLive(bikePointId))
@@ -42,7 +41,7 @@ trait TFLService extends MemcachedCodecs {
   private def fetchFromLive(bikePointId: String): Future[BikePoint] = {
     val url = "https://api.tfl.gov.uk/Place/" + bikePointId
     Logger.info("Fetching from url: " + url)
-    WS.url(url).get.map {
+    ws.url(url).get.map {
       response => {
         Logger.info("HTTP response body: " + response.body)
         implicit val readsBikePointAdditionalProperty = Json.reads[BikePointAdditionalProperty]
@@ -63,12 +62,6 @@ trait TFLService extends MemcachedCodecs {
   }
 
   private def cacheKeyFor(bikePointId: String): String = "docking-station-" + bikePointId
-
-}
-
-object TFLService extends TFLService {
-
-  override val memcached = Memcached(Configuration(Play.configuration.getString("memcached.host").get + ":11211"), ec)
 
 }
 
