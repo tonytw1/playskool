@@ -1,67 +1,46 @@
 package services
 
 import model.{BikePoint, BikePointAdditionalProperty}
+import play.api.Logger
 import play.api.libs.json._
 import play.api.libs.ws.WSClient
-import play.api.Logger
-import shade.memcached.{Configuration, Memcached, MemcachedCodecs}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scala.concurrent.duration._
 
-class TFLService @Inject()(ws: WSClient, config: play.api.Configuration) extends MemcachedCodecs {
+// Basic client for Transport for London's bike hire scheme API
+class TFLService @Inject()(ws: WSClient, config: play.api.Configuration) {
 
-  private val memcachedHost = config.getString("memcached.host").get
-  private val memcachedPort = config.getInt("memcached.port").get
-  val memcached = Memcached(Configuration(memcachedHost + ":" + memcachedPort))
+  // Configurable API base end point
+  // Use the Play Configuration API to access config value
+  private val apiUrl = config.get[String]("api.url")
 
   def fetchBikePoint(id: Int): Future[BikePoint] = {
     Logger.info("Get bike point by id: " + id)
     val bikePointId = "BikePoints_" + id
-
-    fetchFromCache(bikePointId).flatMap { cacheHit =>
-      if (cacheHit.isDefined) {
-        Logger.info("Cache hit for: " + id)
-        Future.successful(cacheHit.get)
-      } else {
-        Logger.info("Cache miss for: " + id)
-        cache(fetchFromLive(bikePointId))
-      }
-    }
+    fetchPlace(bikePointId)
   }
 
-  def fetchFromCache(bikePointId: String): Future[Option[BikePoint]] = {
-    val keyFor = cacheKeyFor(bikePointId)
-    Logger.info("Fetching from cache: " + bikePointId)
-    memcached.get[BikePoint](keyFor)
-  }
-
-  private def fetchFromLive(bikePointId: String): Future[BikePoint] = {
-    val url = "https://api.tfl.gov.uk/Place/" + bikePointId
+  private def fetchPlace(bikePointId: String): Future[BikePoint] = {
+    val url = apiUrl + "/Place/" + bikePointId
+    // Use the Play Logger API to emit logging
     Logger.info("Fetching from url: " + url)
     ws.url(url).get.map {
       response => {
         Logger.info("HTTP response body: " + response.body)
+        // Implicit JSON formatters
+        // This is weird
         implicit val readsBikePointAdditionalProperty = Json.reads[BikePointAdditionalProperty]
         implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
-        Json.parse(response.body).as[BikePoint]
+
+        val bikePoint = Json.parse(response.body).as[BikePoint]
+
+        Logger.info("Fetched bike point: " + bikePoint)
+        bikePoint
       }
     }
   }
-
-  private def cache(response: Future[BikePoint]): Future[BikePoint] = {
-    response.map(x => {
-      val keyFor: String = cacheKeyFor(x.id)
-      Logger.info("Caching " + x.id + " to: " + keyFor)
-      memcached.set(keyFor, x, 10.second)
-    }
-    )
-    response
-  }
-
-  private def cacheKeyFor(bikePointId: String): String = "docking-station-" + bikePointId
 
 }
 

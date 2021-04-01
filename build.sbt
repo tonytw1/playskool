@@ -6,6 +6,7 @@ lazy val `playskool` = (project in file(".")).enablePlugins(PlayScala)
 
 scalaVersion := "2.12.8"
 
-libraryDependencies ++= Seq(ws, "io.monix" %% "shade" % "1.10.0" )
-libraryDependencies += specs2 % Test
+libraryDependencies += ws
 libraryDependencies += guice
+
+libraryDependencies += specs2 % Test
