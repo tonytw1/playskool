@@ -1,1 +1,1 @@
-GET        /    controllers.Application.dockingStation()
+GET        /    controllers.Application.homepage()
