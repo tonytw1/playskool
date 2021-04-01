@@ -29,6 +29,16 @@ class Application @Inject()(config: Configuration, TFLService: TFLService) exten
       Logger.info("Bike point is now available")
       Ok(views.html.docking_station(bikePoint))
     }
+    
+  }
+
+  // Id is past in from routes as a path parameter
+  def dockingStation(id: Int) = Action.async {
+    for {
+      bikePoint <- tflService.fetchBikePoint(id)
+    } yield {
+      Ok(views.html.docking_station(bikePoint))
+    }
   }
 
 }

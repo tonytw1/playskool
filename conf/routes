@@ -1,1 +1,2 @@
-GET        /    controllers.Application.homepage()
+GET        /                controllers.Application.homepage()
+GET        /docking-station     controllers.Application.dockingStation(id: Int)
