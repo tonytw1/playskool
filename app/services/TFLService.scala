@@ -17,30 +17,32 @@ class TFLService @Inject()(ws: WSClient, config: play.api.Configuration) {
   private val apiUrl = config.get[String]("api.url")
 
   def fetchBikePoint(id: Int): Future[BikePoint] = {
+    // Scala lets you nest functions
+    def fetchPlace(bikePointId: String): Future[BikePoint] = {
+      val url = apiUrl + "/Place/" + bikePointId
+      // Use the Play Logger API to emit logging
+      Logger.info("Fetching from url: " + url)
+      ws.url(url).get.map {
+        response => {
+          Logger.info("HTTP response body: " + response.body)
+          // Implicit JSON formatters
+          // This is weird
+          implicit val readsBikePointAdditionalProperty = Json.reads[BikePointAdditionalProperty]
+          implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
+
+          val bikePoint = Json.parse(response.body).as[BikePoint]
+
+          Logger.info("Fetched bike point: " + bikePoint)
+          bikePoint
+        }
+      }
+    }
+
     Logger.info("Get bike point by id: " + id)
     val bikePointId = "BikePoints_" + id
     fetchPlace(bikePointId)
   }
 
-  private def fetchPlace(bikePointId: String): Future[BikePoint] = {
-    val url = apiUrl + "/Place/" + bikePointId
-    // Use the Play Logger API to emit logging
-    Logger.info("Fetching from url: " + url)
-    ws.url(url).get.map {
-      response => {
-        Logger.info("HTTP response body: " + response.body)
-        // Implicit JSON formatters
-        // This is weird
-        implicit val readsBikePointAdditionalProperty = Json.reads[BikePointAdditionalProperty]
-        implicit val readsBikePoint: Reads[BikePoint] = Json.reads[BikePoint]
-
-        val bikePoint = Json.parse(response.body).as[BikePoint]
-
-        Logger.info("Fetched bike point: " + bikePoint)
-        bikePoint
-      }
-    }
-  }
 
 }
 
