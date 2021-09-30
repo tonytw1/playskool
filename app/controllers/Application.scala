@@ -17,7 +17,7 @@ class Application @Inject()(config: Configuration, TFLService: TFLService) exten
   private val defaultDockingStation = config.get[Int]("dockingstation")
 
   def homepage() = Action.async {
-    val placeName = "Kings Cross" // vals a immutable so you can depend on this value not changing
+    val placeName: String = "Kings Cross" // vals a immutable so you can depend on this value not changing
 
     Logger.info("Requesting bike points")
     val eventualNearby: Future[Seq[BikePoint]] = tflService.searchBikePoints(placeName)
