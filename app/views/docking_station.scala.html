@@ -2,11 +2,8 @@
 
 @(bikePoint: BikePoint)(implicit header: views.Header)
 
-<h1>@header.date</h1>
+<h1>@bikePoint.commonName</h1>
 <hr/>
-
-<h4>@bikePoint.commonName</h4>
 <p>Bikes available: @bikePoint.bikesAvailable.iterator.next().value</p>
 <p>Spaces available: @bikePoint.spacesAvailable.iterator.next().value</p>
-
 <hr/>

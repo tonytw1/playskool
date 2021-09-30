@@ -1,0 +1,12 @@
+@import model.BikePoint
+
+@(placeName: String, nearby: Seq[BikePoint])(implicit header: views.Header)
+
+<h1>@placeName</h1>
+<hr/>
+
+<ul>@for(bikePoint <- nearby) {
+    <li><a href="@routes.Application.dockingStation(bikePoint.id)">@bikePoint.commonName</a></li>
+}
+</ul>
+<hr/>
